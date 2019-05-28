@@ -1,24 +1,26 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import ApiLyrics from './ApiLyrics'
+import Speech from "speak-tts"
+
+// import './voicerss-tts.min.js'
+
+
+
+
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      main app
+  
+
+    <ApiLyrics
+        buttonText={"SEND SPEECH"}
+  
+        placeholder={"enter lyrics"}
+      />
+      
     </div>
   );
 }
