@@ -49,7 +49,7 @@ handleUpdate(event){
 })
 console.log(this.state.lyrics)
 speech.speak({
-  text: `${this.state.lyrics}`,
+  text: this.state.lyrics
 }).then(() => {
   console.log("Success !")
 }).catch(e => {
@@ -58,16 +58,12 @@ speech.speak({
 
  
 }
-pauseButton(){
-
-}
 render () {
   return(
     <div> 
     
     <form onSubmit={this.handleUpdate}>
       <button onClick={this.handleUpdate}> {this.props.buttonText}</button>
-      {/* <button onClick={}></button> */}
       <h1> {this.state.lyrics}</h1>
     </form>
   

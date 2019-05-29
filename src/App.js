@@ -12,12 +12,11 @@ import Speech from "speak-tts"
 function App() {
   return (
     <div className="App">
-      main app
+      Robot Karaoke 
   
 
     <ApiLyrics
         buttonText={"SEND SPEECH"}
-  
         placeholder={"enter lyrics"}
       />
       
