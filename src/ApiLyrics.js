@@ -11,9 +11,17 @@ class ApiLyrics extends Component {
     this.state ={
       text:'testing',
       lyrics: 'testing',
+      searchText: 'Justin Bieber',
+      allSongs: []
+  
     }
 
     this.handleUpdate = this.handleUpdate.bind(this)
+    this.pauseButton = this.pauseButton.bind(this)
+    this.resumeButton = this.resumeButton.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
+    this.searchSong = this.searchSong.bind(this)
+
   }
   
 componentDidMount(){
@@ -31,7 +39,7 @@ componentDidMount(){
  
 }
 
-handleUpdate(event){
+handleSubmit(event){
   event.preventDefault()
   const speech = new Speech()
   speech.init({
@@ -55,20 +63,57 @@ speech.speak({
 }).catch(e => {
   console.error("An error occurred :", e)
 })
-
- 
 }
+
+handleUpdate(event){
+
+  this.setState({
+   searchText: event.currentTarget.value
+  
+  })
+  console.log(event.currentTarget.value)
+  
+}
+
+pauseButton(){
+  const speech = new Speech()
+  speech.pause();
+}
+resumeButton(){
+  const speech = new Speech()
+  speech.resume();
+}
+searchSong(event){
+  event.preventDefault()
+  console.log(this.state.searchText)
+    const searchURL = `https://cors-anywhere.herokuapp.com/http://api.musixmatch.com/ws/1.1/track.search?q_artist=${this.state.searchText}&page_size=3&page=1&s_track_rating=desc&apikey=1f014cafc572cf2ca97527bd6fa9633a`
+
+  axios.get(searchURL)
+  .then( res => {
+    //let searchResults = res.data
+    console.log(res.data.message.body.track_list)
+    this.setState({
+      allSongs: res.data.message.body.track_list
+    })
+    console.log(allSongs)
+  })
+  .catch( err => console.log(err))
+}
+
 render () {
   return(
     <div> 
     
-    <form onSubmit={this.handleUpdate}>
-      <button onClick={this.handleUpdate}> {this.props.buttonText}</button>
-      <h1> {this.state.lyrics}</h1>
+    <form onSubmit={this.handleSubmit}>
+      <button onClick={this.handleSubmit}> {this.props.buttonText}</button>
+      <button onClick={this.pauseButton}> Pause </button>
+      <button onClick={this.resumeButton}> Resume </button>
     </form>
-  
-    
-
+    <form onSubmit={this.searchSong}>
+    <input placeholder="enter Artist" onChange={this.handleUpdate}></input>
+    <button> Search Artist </button>
+    </form>
+    <h1> {this.state.lyrics}</h1>  
     </div>
   )
 }
