@@ -4,7 +4,8 @@ import axios from 'axios'
 import Speech from 'speak-tts'
 import SongList from './SongList'
 import seed from './SeedData'
-
+import { Link } from "react-router-dom"
+import { throwStatement } from '@babel/types';
 
 
 class ApiLyrics extends Component {
@@ -16,9 +17,10 @@ class ApiLyrics extends Component {
       lyrics: '',
       searchText: '',
       allSongs: [],
-      track_id: null
-
-
+      track_id: null,
+      // isClicked: false
+      clickedIndex: '',
+      currentVoice: 'Fiona'
     }
 
     this.handleUpdate = this.handleUpdate.bind(this)
@@ -28,6 +30,7 @@ class ApiLyrics extends Component {
     this.searchSong = this.searchSong.bind(this)
     this.updateSong = this.updateSong.bind(this)
     this.fetchLyrics = this.fetchLyrics.bind(this)
+    this.setVoice = this.setVoice.bind(this)
 
 
   }
@@ -69,12 +72,13 @@ componentDidMount(){
     speech.init({
       'volume': 1,
       'lang': 'en-GB',
-      'rate': .2,
+      'rate': 1,
       'pitch': 1,
-      'voice': 'Google UK English Male',
+      'voice': this.state.currentVoice,
       'splitSentences': true,
       'listeners': {
         'onvoiceschanged': (voices) => {
+          console.log("Event voiceschanged", voices)
         }
       }
     })
@@ -96,12 +100,17 @@ componentDidMount(){
     })
 
   }
-  async updateSong(newSong) {
+  async updateSong(newSong, index) {
     await this.setState({
-      track_id: newSong
+      track_id: newSong,
+      // isClicked: true
+      clickedIndex: index
     })
     this.fetchLyrics();
   }
+
+
+
   pauseButton() {
     const speech = new Speech()
     speech.cancel()
@@ -126,14 +135,27 @@ componentDidMount(){
       })
       .catch(err => console.log(err))
   }
+  setVoice(event){
+    this.setState({
+      currentVoice: event.currentTarget.value
+    })
+
+    // const speech = new Speech()
+    // speech.setVoice(this.state.currentVoice)
+  }
 
   render() {
 
     return (
       <div>
-      
+        <div className='button-span'> 
+        <h1> Robot Karaoke </h1>
+      <select value={this.state.currentVoice} onChange={this.setVoice}>
+          <option value="Diego">Diego</option>
+          <option value="Fiona">Fiona</option>
+          </select> 
         <form onSubmit={this.handleSubmit}>
-          <button onClick={this.handleSubmit}> {this.props.buttonText}</button>
+          <button onClick={this.handleSubmit}> Queue Lyrics{this.props.buttonText}</button>
           <button onClick={this.pauseButton}> Pause </button>
           <button onClick={this.resumeButton}> Resume </button>
         </form>
@@ -142,10 +164,13 @@ componentDidMount(){
           <input placeholder="enter Artist" onChange={this.handleUpdate}></input>
           <button> Search Artist </button>
         </form>
-        <SongList songLyrics={this.state.lyrics} updateSong={this.updateSong} mySongs={this.state.allSongs} />
+        </div>
+        <body className='song-body'>
+        
+        <SongList clickedIndex={this.state.clickedIndex} isClicked={this.state.isClicked} songLyrics={this.state.lyrics} updateSong={this.updateSong} mySongs={this.state.allSongs} />
         {/* <h1> {this.state.lyrics}</h1> */}
 
-        
+      </body>
       </div>
     )
   }
